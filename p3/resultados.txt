@@ -1,0 +1,138 @@
+_______________________
+Mario Aguilera Alcalde |
+_______________________|
+
+1.- Salida por pantalla cuando se invoca a make clean dos veces consecutivas.
+No deben aparecer errores en ningún caso.
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ make clean
+rm -f *.o
+rm -f practica3_1 practica3_2 calculapi
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ make clean
+rm -f *.o
+rm -f practica3_1 practica3_2 calculapi
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+____________________________________________________________________________________________________________________________________
+
+
+2.- Salida por pantalla cuando a continuación se invoca a make sin argumentos,
+y cuando se invoca de nuevo acto seguido. La segunda invocación debe
+responder con que no hay nada que hacer, y no recompilar de nuevo nada.
+
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ make 
+gcc -g -Wall -c calculapi.c 
+gcc calculapi.o -o calculapi -lm 
+gcc -g -Wall -c practica3.c
+cc    -c -o f1.o f1.c
+gcc practica3.o f1.o -o practica3_1 -lpthread -lm
+cc    -c -o f2.o f2.c
+gcc practica3.o f2.o -o practica3_2 -lpthread
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ make
+make: No se hace nada para 'all'.
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+____________________________________________________________________________________________________________________________________
+
+
+3.- Comportamiento de cualquiera de los programas si se invoca sin argumentos.
+Se debe mostrar un mensaje de error como el indicado anteriormente.
+
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./calculapi
+Argumentos incorrectos. Uso:
+./calculapi <numero de intervalos>
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3_1
+Argumentos incorrectos. Uso:
+./practica3_1 <numero de hilos> <numero de divisiones>
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3_2
+Argumentos incorrectos. Uso:
+./practica3_2 <numero de hilos> <numero de divisiones>
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+
+____________________________________________________________________________________________________________________________________
+
+
+4.- Salida por pantalla del programa calculapi al invocarlo para 100.000
+divisiones
+
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./calculapi 100000
+Valor calculado: 3.14159261639437 
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+
+____________________________________________________________________________________________________________________________________
+
+
+
+5.- Salida por pantalla de los programas de cálculo multihilo realizados para los
+siguientes ejemplos:
+
+	5.1-> 1 hilo y 109 divisiones (sólo para uno de ellos)
+
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3_1 1 109
+		Valor calculado= 3.14055956188984
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+
+	5.2-> 10 hilos y 109 divisiones (sólo para uno de ellos)
+
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3_1 10 109
+		Valor calculado= 3.14055956188984
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+
+	5.3-> 1 hilo y 400.000.000 divisiones, midiendo el tiempo con time (para
+	ambos).
+
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3_1 1 400000000
+		Valor calculado= 3.14159263764745
+
+		real	0m6,427s
+		user	0m6,413s
+		sys	0m0,008s
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3_2 1 400000000
+		Valor calculado= 3.14159263764819
+
+		real	0m5,232s
+		user	0m5,201s
+		sys	0m0,012s
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+ 
+
+
+
+	5.4-> 4 hilos y 400.000.000 divisiones, midiendo el tiempo con time (para
+	ambos).
+
+
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3_1 4 400000000
+		Valor calculado= 3.14159264071163
+
+		real	0m4,425s
+		user	0m8,774s
+		sys	0m0,004s
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3_2 4 400000000
+		Valor calculado= 3.14159264140805
+
+		real	0m3,692s
+		user	0m7,328s
+		sys	0m0,008s
+		mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

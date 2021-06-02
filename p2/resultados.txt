@@ -1,0 +1,111 @@
+Mario Aguilera Alcalde
+
+
+
+1.-Salida por pantalla cuando se invoca a make clean dos veces
+consecutivas. No deben aparecer errores en ningún caso.
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ make clean
+rm -f *.o
+rm -f practica2_std practica2_mmap
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ make clean
+rm -f *.o
+rm -f practica2_std practica2_mmap
+
+
+__________________________________________________________________________________________________________________________________
+
+2.-Salida por pantalla cuando a continuación se invoca a make sin
+argumentos, y cuando se invoca de nuevo acto seguido. La segunda
+invocación debe responder con que no hay nada que hacer, y no
+recompilar de nuevo nada.
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ make
+gcc -g -Wall -c ordenanotas_mmap.c
+gcc -g -Wall -c practica2.c
+gcc -g practica2.o ordenanotas_mmap.o -o practica2_mmap
+gcc -g -Wall -c ordenanotas_std.c
+gcc  practica2.o ordenanotas_std.o -o practica2_std
+gcc -g -Wall -c muestranotas.c 
+gcc muestranotas.o -o practica2_mostrar
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ make
+make: No se hace nada para 'all'.
+
+
+____________________________________________________________________________________________________________________________________
+
+3.-Comportamiento de cualquiera de los programas si se invoca sin
+argumentos. Se debe mostrar un mensaje de error como el indicado
+anteriormente.
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_mostrar
+Número de argumentos insuficiente.
+Uso: ./practica2_mostrar file
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_std
+Número de argumentos insuficiente.
+Uso: ./practica2_std file
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_mmap
+Número de argumentos insuficiente.
+Uso: ./practica2_mmap file
+
+
+___________________________________________________________________________________________________________________________________
+
+4.-Comportamiento del programa si se invoca con un nombre de archivo
+incorrecto. Se debe mostrar un mensaje de error como el indicado
+anteriormente.
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_mostrar archivomal.bin
+Error al abrir el archivo: No such file or directory
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_std archivomal.bin
+Error al abrir el archivo: No such file or directory
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_mmap archivomal.bin
+Error al abrir el archivo: No such file or directory
+
+
+___________________________________________________________________________________________________________________________________
+
+5.-Salida por pantalla de las primeras líneas producidas por el programa
+practica2_mostrar al invocarlo para el archivo datosord.bin.
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_mostrar datosord.bin
+Imprimiendose archivo..
+
+  9035476: 10.00: 10.00: 10.00:Almazan Vallinas, Alberto
+ 53108492: 10.00:  8.50:  9.25:Garcia Valero, Julian
+  9025780:  8.50: 10.00:  9.25:Matias Perez, Javier
+ 47226383:  8.50:  9.50:  9.00:Lopez Bermejo, Josu
+ 50111390:  8.00: 10.00:  9.00:Ropero Rey, David
+ 53437545: 10.00:  7.50:  8.75:Vallejo Roman, Raul
+ 75767484:  9.50:  7.50:  8.50:Fernandez Arco, Mario
+ 53413708: 10.00:  7.00:  8.50:Gonzalez Tato, Fatima
+
+____________________________________________________________________________________________________________________________________
+
+6.-Salida por pantalla de los dos programas de ordenación realizados, y en
+ambos casos lo que responde diff -s al comparar el archivo
+datos.bin generado con el archivo datosord.bin proporcionado.
+
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_std datos.bin
+Intercambios: 13989
+Tiempo empleado: 305186us
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ diff -s datosord.bin datos.bin
+Los archivos datosord.bin y datos.bin son idénticos
+
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ ./practica2_mmap datos.bin
+Intercambios: 13989
+Tiempo empleado: 96465us
+mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p2$ diff -s datosord.bin datos.bin
+Los archivos datosord.bin y datos.bin son idénticos
+
+___________________________________________________________________________________________________________________________________
+
+
+
+
+

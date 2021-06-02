@@ -1,0 +1,239 @@
+_______________________
+Mario Aguilera Alcalde |
+_______________________|
+
+
+1.- El programa a realizar en el apartado 2.5 responderá de la manera que se
+indica en las pruebas que se muestran en ese mismo apartado
+
+	a) Primero, el programa se lanza con un timeout de 5 segundos, pero termina antes de
+	transcurrido este tiempo sin mayor incidencia:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_pimc 100000000 5
+	Proceso lanzado (PID= 2772)
+	Finalizando por timeout tras 62008861 iteraciones.
+	Valor calculado: 3.141711
+
+
+	b) En segundo lugar, el programa se lanza para un número mayor de iteraciones, por lo
+	que el temporizador expira antes de que al programa le dé tiempo a acabar la tarea e
+	imprime el resultado en función de lo que lleva hasta el momento:
+	
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_pimc 1000000000 5
+	Proceso lanzado (PID= 2800)
+	Finalizando por timeout tras 62045000 iteraciones.
+	Valor calculado: 3.141969
+	
+	
+	c) En tercer lugar, el programa se lanza con los mismos parámetros pero pocos
+	segundos después se interrumpe pulsando Ctrl+C:
+		
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_pimc 1000000000 5
+	Proceso lanzado (PID= 2811)
+	^CFinalizado por interrupción.
+	Valor calculado: 3.141471
+
+	
+	d) Finalmente, el programa se lanza con un timeout y número de iteraciones elevado
+	para que dé tiempo a enviarle la señal SIGUSR1 desde otra consola empleando el
+	comando kill –SIGUSR1 2827. Observe que el PID que se especifica en este
+	comando es el que el propio programa imprime al iniciar su ejecución, y que cambiará
+	cada vez por lo que obviamente el comando variará. Observe también que el
+	programa imprime el PID del proceso que le envía la señal. 
+	
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_pimc 1000000000 30
+	Proceso lanzado (PID= 2872)
+	Resultado parcial solicitado (SIGURS1 de 2827).
+	Valor calculado hasta ahora: 3.141496
+	Resultado parcial solicitado (SIGURS1 de 2827).
+	Valor calculado hasta ahora: 3.141527
+	Resultado parcial solicitado (SIGURS1 de 2827).
+	Valor calculado hasta ahora: 3.141464
+	Finalizando por timeout tras 364736373 iteraciones.
+	Valor calculado: 3.141514
+
+___________________________________________________________________________________________________________________________________
+
+
+2.-  Parte 4.4 tuberías:
+
+
+	a) comprobar que sucede si no metemos parámetros:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_pipes
+	Argumentos incorrectos. Uso:
+	./practica4_pipes <num divisiones> <num work packages> <numero de workers>
+	
+
+	b)Muestra de funcionamiento:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_pipes 100000000 1000 4
+	Valor calculado= 3.14159263924033
+	
+	
+	c) Si se lanza el programa para un número concreto de divisiones, el
+	resultado debe ser el mismo independientemente del número de
+	paquetes de trabajo y procesos que se lancen	
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_pipes 109 1 1
+	Valor calculado= 3.14157862558990
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_pipes 109 10 1
+	Valor calculado= 3.14157862558990
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_pipes 109 10 4
+	Valor calculado= 3.14157862558990
+	
+
+	d) Si se lanza el programa empleando el comando time, debe apreciarse
+	un aumento de la velocidad proporcional al número de procesos de
+	trabajo utilizados.
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ time ./practica4_pipes 400000000 10 1
+	Valor calculado= 3.14159264312655
+
+	real	0m10,868s
+	user	0m10,815s
+	sys	0m0,007s
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ time ./practica4_pipes 400000000 10 2
+	Valor calculado= 3.14159264312651
+
+	real	0m5,983s
+	user	0m11,599s
+	sys	0m0,060s
+	
+___________________________________________________________________________________________________________________________________
+
+
+3.- Parte 4.5 
+
+	
+	a) Comprobacion errores si no ponemos argumentos:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_dispatcher
+	Argumentos incorrectos. Uso:
+	./practica4_dispatcher <num div> <num work packages> <work fifo>
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_worker
+	Argumentos incorrectos. Uso:
+	./practica4_worker <work fifo> <results fifo> [<p>ermanente]
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_gatherer
+	Argumentos incorrectos. Uso:
+	./practica4_gatherer <results fifo> [<p>ermanente}
+
+
+
+	b) ejemplo sin permanente:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ mkfifo trabajo
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ mkfifo resultados
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_gatherer resultados &
+	[1] 3128
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_worker trabajo resultados &
+	[2] 3129
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_worker trabajo resultados &
+	[3] 3130
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_worker trabajo resultados &
+	[4] 3131
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_dispatcher 1000000000 100 trabajo
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ Valor calculado= 3.14159264060551
+
+	[1]   Hecho                   ./practica4_gatherer resultados
+	[2]   Hecho                   ./practica4_worker trabajo resultados
+	[3]-  Hecho                   ./practica4_worker trabajo resultados
+	[4]+  Hecho                   ./practica4_worker trabajo resultados
+ 	
+
+	c) utilizacion make run_fifos:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ make run_fifos 
+	mkfifo trabajo
+	mkfifo resultados
+	./practica4_gatherer resultados &
+	./practica4_worker trabajo resultados &
+	./practica4_worker trabajo resultados &
+	./practica4_worker trabajo resultados &
+	./practica4_dispatcher 1000000000 100 trabajo
+	
+
+	d)  lanzamos los procesos con la opción “p(ermanente):
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_gatherer resultados p &
+	[1] 3175
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_worker trabajo resultados p &
+	[2] 3177
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_worker trabajo resultados p &
+	[3] 3178
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_dispatcher 1000000000 100 trabajo 
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ Valor calculado= 3.14159264060564
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_dispatcher 5000000000 10000 trabajo
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ Valor calculado= 3.14159269778227
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ps
+	    PID TTY          TIME CMD
+	   2124 pts/0    00:00:00 bash
+	   3074 pts/0    00:00:00 practica4_worke
+	   3175 pts/0    00:00:00 practica4_gathe
+	   3177 pts/0    00:00:20 practica4_worke
+	   3178 pts/0    00:00:20 practica4_worke
+	   3181 pts/0    00:00:00 ps
+	
+
+	//PARA MATAR LOS PROCESOS WORKER Y GATHERER QUE NO FINALIZAN: utilizar kill o killall
+
+
+____________________________________________________________________________________________________________________________________
+
+
+
+4.- Realización 4.6 FIFOs y execve()
+
+
+	a) Comprobacion errores si no ponemos argumentos:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_fifos
+	Argumentos incorrectos. Uso:
+	./practica4_fifos <num divisiones> <num work packages> <numero de workers>
+
+	
+	b) Otra comprobacion de error al crear mkfifos:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ make
+	gcc -g -Wall practica4_pimc.c -o practica4_pimc -lm
+	gcc -g -Wall -c practica4_pipes.c
+	gcc -g -Wall -c funcion.c
+	gcc -g -Wall -c practica4_agents.c
+	gcc practica4_pipes.o funcion.o practica4_agents.o -o practica4_pipes
+	gcc -g -Wall -c practica4_dispatcher.c 
+	gcc practica4_dispatcher.o practica4_agents.o funcion.o -o practica4_dispatcher
+	gcc -g -Wall -c practica4_worker.c
+	gcc practica4_worker.o practica4_agents.o funcion.o -o practica4_worker
+	cc -g -Wall -c practica4_gatherer.c
+	cc -g -Wall funcion.o practica4_gatherer.o practica4_agents.o -o practica4_gatherer      
+	gcc -g -Wall -c practica4_fifos.c
+	gcc practica4_fifos.o -o practica4_fifos
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ make
+	make: No se hace nada para 'all'.
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$ ./practica4_fifos
+	Argumentos incorrectos. Uso:
+	./practica4_fifos <num divisiones> <num work packages> <numero de workers>
+
+
+	c) Practica funcionando:
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p4$  ./practica4_fifos 100000000 1000 4
+	Valor calculado= 3.14159263924037
+	
+	[EL PROGRAMA ES ÉL MISMO EL QUE CREA LOS PROCESOS PERTINENTES]
+
+
+____________________________________________________________________________________________________________________________________
+
+
+	 SE HA REALIZADO TODOS LOS APARTADOS DE LA PRACTICA INCLUYENDO TODOS LOS POSIBLES EXTRAS
+	________________________________________________________________________________________
+
+
+
+
+
+
+
+

@@ -1,0 +1,224 @@
+______________________
+Mario Aguilera Alcalde |
+_______________________|
+
+
+____________________________________________________________________________________________________________________________________
+
+1. En una primera versión modificada, todos los hilos van acumulando el
+resultado de su trabajo en la variable global directamente tras calcular
+el área de cada trapecio, y sin emplear ningún mecanismo de
+sincronización. El alumno debe observar y documentar cuál es el efecto
+de esta forma de trabajar, tanto en tiempos de ejecución como en el
+resultado numérico obtenido.
+
+
+
+
+CODIGO MODIFICADO:
+------------------
+
+for(int i=numero_intervalos; i>0; i--)
+         {
+
+                if(i==numero_intervalos){
+                        x1=(numero_intervalos -1)*(1./num_divisiones);
+                        if(start_pos !=0){
+                                x1=start_pos*(1./num_divisiones)+ (numero_intervalos -1)*(1./num_divisiones);
+                        }
+                }
+                else{
+                        x1=x1 -(1./(num_divisiones));
+                }
+
+                x2= x1 + (1./num_divisiones);
+                y1= funcion_y(x1);
+                y2 = funcion_y(x2);
+                area_trapecio_aux = (((y2+y1)*(x2-x1))/(2)) ;
+               // area_trapecio = area_trapecio + area_trapecio_aux;
+LINEA MOD ->	valorPi = valorPi + area_trapecio_aux*4;
+
+        }
+       //pthread_mutex_lock(&mutex);
+        //valorPi = valorPi + area_trapecio*4;
+        //pthread_mutex_unlock(&mutex);
+
+        pthread_exit(NULL);
+}
+
+
+Donde las líneas comentadas con "//" eran las lineas originales y que para este caso hemos comentado y añadido únicamente la
+linea que pone: "LINEA MOD"
+
+
+
+
+
+
+
+
+PRUEBAS EN TERMINAL:
+--------------------
+
+1.- Primero he probado en la terminal a para 109 divisiones variar el numero de hilos con 1,10 y 15 hilos.
+En estos casos, para todos los hilos nos da exactamente el mismo resultado lo que, aparentemente si alguien
+no hiciese mas comprobaciones puede llegar a pensar que el programa sin emplear ningun mecanismo de
+sincronizacion pudiese funcionar.
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3v1 1 109
+	Valor calculado= 3.14055956188984
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3v1 10 109
+	Valor calculado= 3.14055956188984
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3v1 15 109
+	Valor calculado= 3.14055956188984
+
+
+
+
+2.- Mas tarde he probado con un numero mas alto de divisiones (400.000.000) ir variando el numero de hilos y para un único hilo el
+resultado si que tiene sentido y se aproxima al número Pi. Esto tiene sentido ya que al ser el único hilo no tendrá 
+problema de sicronizarse con otros hilos al ser el único. 
+
+Pero en cambio al introducir mas hilos (4, 15, 30 y 50) la cosa cambia. Ahora al haber mas hilos y no haber tenido en cuenta
+la exclusion mutua y no ser operaciones atómicas seproduce que varios hilos entran a la vez y producen resultados de Pi anómalos.
+
+En cuanto al tiempo de ejecucion comparado el de un único hilo y el resto si que disminuye pero una vez tenemos 10,15 o 30 ya el
+tiempo no disminulle si no que, parece que varía de forma aleatoria.
+
+ 
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v1 1 400000000
+	Valor calculado= 3.14159263764745
+
+	real	0m15,634s
+	user	0m15,586s
+	sys	0m0,004s
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v1 4 400000000
+	Valor calculado= 1.67881335012958
+
+	real	0m10,014s
+	user	0m19,888s
+	sys	0m0,032s
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v1 4 400000000
+	Valor calculado= 1.73362536898428
+
+	real	0m10,047s
+	user	0m19,995s
+	sys	0m0,012s
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v1 15 400000000
+	Valor calculado= 0.60753452257904
+
+	real	0m9,978s
+	user	0m19,857s
+	sys	0m0,012s
+
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v1 30 400000000
+	Valor calculado= 0.39349360707670
+
+	real	0m10,016s
+	user	0m19,887s
+	sys	0m0,048s
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v1 50 400000000
+	Valor calculado= 0.24559959847279
+
+	real	0m9,996s
+	user	0m19,851s
+	sys	0m0,052s
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+
+____________________________________________________________________________________________________________________________________
+
+2. En una segunda versión modificada se operará igual que en la anterior, es
+decir, acumulando el resultado de calcular el área de cada trapecio
+directamente en la variable global compartida; pero empleando un
+semáforo para evitar condiciones de carrera. El alumno observará y
+documentará qué pasa con los tiempos de ejecución y con los tiempos que
+devuelve time.
+
+
+CODIGO MODIFICADO:
+------------------
+
+for(int i=numero_intervalos; i>0; i--)
+         {
+
+                if(i==numero_intervalos){
+                        x1=(numero_intervalos -1)*(1./num_divisiones);
+                        if(start_pos !=0){
+                                x1=start_pos*(1./num_divisiones)+ (numero_intervalos -1)*(1./num_divisiones);
+                        }
+                }
+                else{
+                        x1=x1 -(1./(num_divisiones));
+                }
+
+                x2= x1 + (1./num_divisiones);
+                y1= funcion_y(x1);
+                y2 = funcion_y(x2);
+                area_trapecio_aux = (((y2+y1)*(x2-x1))/(2)) ;
+                //area_trapecio = area_trapecio + area_trapecio_aux;
+LINEA MOD ->    pthread_mutex_lock(&mutex);
+LINEA MOD ->    valorPi = valorPi + area_trapecio_aux*4;
+LINEA MOD ->    pthread_mutex_unlock(&mutex);
+
+        }
+        //pthread_mutex_lock(&mutex);
+        //valorPi = valorPi + area_trapecio*4;
+        //pthread_mutex_unlock(&mutex);
+
+        pthread_exit(NULL);
+}
+
+Donde las líneas comentadas con "//" eran las lineas originales y que para este caso hemos comentado y añadido únicamente las
+lineas que pone: "LINEA MOD", donde se ha añadido los semaforos respecto a la versión anterior.
+
+
+PRUEBAS EN TERMINAL:
+--------------------
+
+1.- Primero he probado en la terminal a para 109 divisiones variar el numero de hilos con 1,10 y 15 hilos.
+En estos casos, para todos los hilos nos da exactamente el mismo resultado lo que, aparentemente si alguien no hiciese
+mas comprobaciones puede llegar a pensar que el programa pudiese funcionar eficientemente.
+
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3v2 1 109
+	Valor calculado= 3.14055956188984
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ ./practica3v2 10 109
+	Valor calculado= 3.14055956188984
+
+
+
+2.- Mas tarde he probado con un numero mas alto de divisiones (400.000.000) ir variando el numero de hilos. Aqui, mirando el tiempo de ejecucion es donde nos damos cuenta que el programa, aun mostrando correctamente el valor del numero pi (gracias al
+uso de semáforos) al aumentar el número de hilos en vez de ir disminuyéndose el tiempo de ejecución (que sería lo normal)
+el tiempo empieza a aumentar como se puede observar comparando la ejecucion de 1 hilo y 4 hilos.
+
+Esto se debe al acumular directamente el resultado en la  variable global directamente.
+Este problema se podría solucionar utilizando cada hilo una variable local al hilo donde acumulará el resultado parcial
+de su trabajo al ir calculando el area del trapecio, para al final, añadir su contenido a la variable global de resultado 
+compartida por todos los hilos, empleando la sincronización adecuada.
+Aumenta mucho el tiempo por la contencion que se produce.
+
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v2 1 400000000
+	Valor calculado= 3.14159263764745
+
+	real	0m16,280s
+	user	0m16,246s
+	sys	0m0,008s
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v2 4 400000000
+	Valor calculado= 3.14159264071256
+
+	real	0m27,707s
+	user	0m41,459s
+	sys	0m12,918s
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ time ./practica3v2 10 400000000
+	Valor calculado= 3.14159264180981
+
+	real	0m29,489s
+	user	0m43,396s
+	sys	0m13,229s
+	mario@mario-virtual-machine:~/labssoo21-marioaguileraa/p3$ 
+
+____________________________________________________________________________________________________________________________________
+-
+
